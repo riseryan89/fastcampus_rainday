@@ -77,8 +77,16 @@ AUTH_USER_MODEL = "app.User"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": "rainday",
+        "ENGINE": "django.db.backends.mysql",
+        "USER": "rainday_app",
+        "PASSWORD": "rainday_app_dev_1",
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
+        "OPTIONS": {
+            "autocommit": True,
+            "charset": "utf8mb4",
+        },
     }
 }
 
