@@ -27,7 +27,6 @@ class StationLocation(models.Model):
     station_authority = models.CharField(max_length=128, help_text="종관기상관측 센터 관할지역")
     province = models.CharField(max_length=8, choices=Provinces.choices, help_text="종관기상관측 센터 관할지역")
     late_models_changed_at = models.DateTimeField(null=True, blank=True, help_text="최근 예측모델 변경 시간")
-    models_name = models.CharField(max_length=128, null=True, blank=True, help_text="예측모델 파일명")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     """
@@ -62,3 +61,18 @@ class Weather(models.Model):
         indexes = [
             models.indexes.Index(fields=["location", "date"], name="ix_weather_location_date_time"),
         ]
+
+
+class WeatherPredictModel(models.Model):
+    location = models.ForeignKey("StationLocation", on_delete=models.RESTRICT, related_name="weather_predict_model")
+    start_date = models.DateField()
+    end_date = models.DateField()
+    model_file_name = models.CharField(max_length=128)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        indexes = [
+            models.indexes.Index(fields=["location", "created_at"], name="ix_predict_loc_created_at"),
+        ]
+        ordering = ["-created_at"]
