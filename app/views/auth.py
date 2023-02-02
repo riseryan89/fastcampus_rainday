@@ -6,7 +6,7 @@ from app.forms.auth_forms import LoginForm, SignupForm
 
 def user_login(request):
     if request.method == "POST":
-        form = LoginForm(request.POST)
+        form = LoginForm(data=request.POST)
         if form.is_valid():
             username = form.cleaned_data["username"]
             password = form.cleaned_data["password"]

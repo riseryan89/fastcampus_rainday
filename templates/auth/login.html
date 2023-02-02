@@ -8,7 +8,9 @@
 <h1>로그인</h1>
 <form method="post">
   {% csrf_token %}
-  {{ form.as_p }}
+  {{ form }}
+  {{form.username.errors}}
+  {{form.password.errors}}
   <input type="submit" value="로그인">
 </form>
 </body>

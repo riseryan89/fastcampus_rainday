@@ -6,5 +6,6 @@
 </head>
 <body>
   <h1>this page is HOME!</h1>
+  <p>{% if user.is_authenticated %}{{user.username}}{%else%}게스트{% endif %}</p>
 </body>
 </html>
