@@ -1,7 +1,5 @@
 from django.shortcuts import render
 
-from app.models import Author, Book, BookMany, AuthorMany
-
 
 def index(request):
     # generate_mock_data()
