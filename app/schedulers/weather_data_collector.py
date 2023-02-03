@@ -41,9 +41,9 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
     else:
         date_range.append((start_dt, end_dt))
     print(date_range)
-    min_date = datetime.strptime(date_range[0][0], "%Y%m%d").date()
-    max_date = datetime.strptime(date_range[-1][1], "%Y%m%d").date()
     for start_dt, end_dt in date_range:
+        min_date = datetime.strptime(start_dt, "%Y%m%d").date()
+        max_date = datetime.strptime(end_dt, "%Y%m%d").date()
         query_string = {
             "serviceKey": service_key,
             "pageNo": page_num,
