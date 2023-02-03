@@ -49,7 +49,7 @@ class Weather(models.Model):
     date = models.DateField()
     min_temp = models.CharField(max_length=6)
     max_temp = models.CharField(max_length=6)
-    total_rain = models.CharField(max_length=4)
+    total_rain = models.CharField(max_length=6)
     avg_humidity = models.CharField(max_length=6)
     wind_speed = models.CharField(max_length=6)
     wind_direction = models.CharField(max_length=6)

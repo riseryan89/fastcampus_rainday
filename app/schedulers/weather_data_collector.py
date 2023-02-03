@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from time import sleep
 from typing import List
 
 import requests
@@ -14,28 +15,31 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
 
     service_key = "V7hxbl/SgKx2csniM4ByG+qpow1xfjIF1097ib8HEkA1htaEDnIC90IYTMDkgOXnxr4yl03wYtioTuyaP7tEvQ=="
     page_num = 1
-    num_of_rows = 30
+    num_of_rows = 100
     data_type = "JSON"
     data_cd = "ASOS"
     date_cd = "DAY"
     start_dt = start_date
     end_dt = end_date if end_date else start_date
     stn_ids = station_location.kma_station_code
+    count_per_request = 60
 
     date_range = []
     # if the gap between start date and end date is more than 1 month, split the date range into 1 month and append to date_range as a tuple
-    if (datetime.strptime(end_dt, "%Y%m%d").date() - datetime.strptime(start_dt, "%Y%m%d").date()).days > 30:
+    if (
+        datetime.strptime(end_dt, "%Y%m%d").date() - datetime.strptime(start_dt, "%Y%m%d").date()
+    ).days > count_per_request:
         start_date = datetime.strptime(start_dt, "%Y%m%d").date()
         end_date = datetime.strptime(end_dt, "%Y%m%d").date()
         while start_date <= end_date:
             done = False
-            if start_date + timedelta(days=30) > end_date:
+            if start_date + timedelta(days=count_per_request) > end_date:
                 end_date_str = end_date.strftime("%Y%m%d")
                 done = True
             else:
-                end_date_str = (start_date + timedelta(days=30)).strftime("%Y%m%d")
+                end_date_str = (start_date + timedelta(days=count_per_request)).strftime("%Y%m%d")
             date_range.append((start_date.strftime("%Y%m%d"), end_date_str))
-            start_date = start_date + timedelta(days=31)
+            start_date = start_date + timedelta(days=count_per_request + 1)
             if done:
                 break
     else:
@@ -66,6 +70,7 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
             print(result)
 
             save_data(result, station_location, min_date, max_date)
+        sleep(5)
 
 
 def check_status(res: dict) -> bool:
