@@ -8,3 +8,5 @@ from app import models as m
 admin.site.register(m.User)
 admin.site.register(m.StationLocation)
 admin.site.register(m.Weather)
+admin.site.register(m.WeatherPredictModel)
+admin.site.register(m.EmailHistory)
