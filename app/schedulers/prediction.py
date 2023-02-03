@@ -1,14 +1,21 @@
+from datetime import date, timedelta
+
 import pandas as pd
 from django.db.models import F
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 import joblib
 
-from app.models import Weather
+from app.models import Weather, StationLocation, WeatherPredictModel
+from rainday.settings import BASE_DIR
 
 
-def create_model():
-    weather_queryset = Weather.objects.all().annotate(date_month=F("date__month")).order_by("date")
+def create_model(station_location: StationLocation, start_date: date, end_date: date):
+    weather_queryset = (
+        Weather.objects.filter(location=station_location, date__gte=start_date, date__lte=end_date)
+        .annotate(date_month=F("date__month"))
+        .order_by("date")
+    )
     df = pd.DataFrame.from_records(
         weather_queryset.values(
             "date_month",
@@ -36,22 +43,40 @@ def create_model():
     accuracy = (y_pred > 0.5) == y_test
     print("Accuracy:", accuracy.mean())
 
-    today_weather = (
-        Weather.objects.annotate(date_month=F("date__month"))
-        .order_by("date")
-        .values(
-            "date_month",
-            "max_temp",
-            "min_temp",
-            "avg_humidity",
-            "wind_speed",
-            "wind_direction",
-            "avg_pa",
-        )
-        .last()
+    rev = WeatherPredictModel.get_revision(station_location)
+
+    joblib.dump(regressor, BASE_DIR / f"app/prediction_models/models_station_{station_location.pk}_{rev}.pkl")
+    WeatherPredictModel.objects.create(
+        location=station_location,
+        start_date=start_date,
+        end_date=end_date,
+        model_file_name=f"models_station_{station_location.pk}_{rev}.pkl",
     )
-    print(today_weather)
+
+
+def predict(station_location: StationLocation, date_: date):
+    yesterday = date_ - timedelta(days=1)
+    model = WeatherPredictModel.objects.filter(location=station_location).first()
+
+    regressor = joblib.load(BASE_DIR / f"app/prediction_models/{model.model_file_name}")
+
+    yesterday_weather = Weather.objects.filter(location=station_location, date=yesterday).annotate(
+        date_month=F("date__month")
+    )
+    today_weather = yesterday_weather.values(
+        "date_month",
+        "max_temp",
+        "min_temp",
+        "avg_humidity",
+        "wind_speed",
+        "wind_direction",
+        "avg_pa",
+    ).first()
     today_df = pd.DataFrame(today_weather, index=[0])
 
     today_prediction = regressor.predict(today_df)
     print(today_prediction)
+    print(today_prediction > 0.5)
+    if today_prediction > 0.5:
+        return True
+    return False

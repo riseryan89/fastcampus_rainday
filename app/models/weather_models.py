@@ -76,3 +76,13 @@ class WeatherPredictModel(models.Model):
             models.indexes.Index(fields=["location", "created_at"], name="ix_predict_loc_created_at"),
         ]
         ordering = ["-created_at"]
+
+    @classmethod
+    def get_revision(cls, location):
+        latest_model = cls.objects.filter(location=location).first()
+        if not latest_model:
+            return 1
+        else:
+            remove_ext = latest_model.model_file_name.split(".")[0]
+            rev = remove_ext.split("_")[-1]
+            return int(rev) + 1
