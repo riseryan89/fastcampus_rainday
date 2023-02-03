@@ -6,5 +6,16 @@
 </head>
 <body>
   <h1>this page is HOME!</h1>
+  {% if user.is_authenticated %}
+  <p>Hello, {{ user.username }}!</p>
+  <a href="{% url 'logout' %}">로그아웃!</a>
+  {% else %}
+  <p>Hello! Guest!</p>
+  <a href="{% url 'login' %}">로그인!</a>
+  {% endif %}
+
+  <p>당신은 지금 {{ city }} 에서 접속 중입니다.</p>
+
+
 </body>
 </html>

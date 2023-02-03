@@ -1,5 +1,6 @@
 import datetime
 
+import requests
 from django.shortcuts import render
 
 from app.models import StationLocation
@@ -13,5 +14,22 @@ def index(request):
     # create_model(
     #     station_location, datetime.datetime(2015, 1, 1, 0, 0, 0).date(), datetime.datetime(2022, 12, 31, 0, 0, 0).date()
     # )
-    predict(station_location, datetime.datetime(2021, 1, 1, 0, 0, 0).date())
-    return render(request, "index.html")
+    # is_rain = predict(station_location, datetime.datetime(2021, 1, 1, 0, 0, 0).date())
+
+    res = requests.get(f"http://ip-api.com/json/{get_client_ip(request)}")
+    context = {
+        "hello": "hello world",
+        "city": res.json()["regionName"],
+    }
+    return render(request, "index.html", context)
+
+
+def get_client_ip(request):
+    x_forwarded_for = request.headers.get("x-appengine-user-ip")
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(",")[0]
+    else:
+        ip = request.META.get("REMOTE_ADDR")
+        if ip == "127.0.0.1":
+            return "1.233.22.33"
+    return ip

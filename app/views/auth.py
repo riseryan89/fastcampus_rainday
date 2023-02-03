@@ -1,4 +1,4 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 
 from app.forms.auth_forms import LoginForm, SignupForm
@@ -28,3 +28,8 @@ def user_signup(request):
     else:
         form = SignupForm()
     return render(request, "auth/signup.html", {"form": form})
+
+
+def user_logout(request):
+    logout(request)
+    return redirect("home")
