@@ -2,7 +2,7 @@ from datetime import date, datetime, timedelta
 from typing import List
 
 import requests
-from django.db import models
+from django.db import models, transaction
 
 from app.models import StationLocation, Weather
 
@@ -41,6 +41,8 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
     else:
         date_range.append((start_dt, end_dt))
     print(date_range)
+    min_date = datetime.strptime(date_range[0][0], "%Y%m%d").date()
+    max_date = datetime.strptime(date_range[-1][1], "%Y%m%d").date()
     for start_dt, end_dt in date_range:
         query_string = {
             "serviceKey": service_key,
@@ -62,6 +64,8 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
             result: List[dict] = parse_data(res)
             result.sort(key=lambda x: x["date"])
             print(result)
+
+            save_data(result, station_location, min_date, max_date)
 
 
 def check_status(res: dict) -> bool:
@@ -90,3 +94,18 @@ def parse_data(res):
             }
         )
     return result
+
+
+@transaction.atomic
+def save_data(result: List[dict], station_location: StationLocation, min_date: date, max_date: date):
+    Weather.objects.filter(location=station_location, date__gte=min_date, date__lte=max_date).delete()
+
+    weather_list = []
+    for item in result:
+        weather_list.append(
+            Weather(
+                location=station_location,
+                **item,
+            )
+        )
+    Weather.objects.bulk_create(weather_list)
