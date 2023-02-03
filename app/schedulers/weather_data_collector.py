@@ -23,7 +23,7 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
     stn_ids = station_location.kma_station_code
 
     date_range = []
-    # if the gap between start date and end date is more than 1 month, split the date range into 1 month and append to date_range as a tuple
+
     if (datetime.strptime(end_dt, "%Y%m%d").date() - datetime.strptime(start_dt, "%Y%m%d").date()).days > 30:
         start_date = datetime.strptime(start_dt, "%Y%m%d").date()
         end_date = datetime.strptime(end_dt, "%Y%m%d").date()
@@ -41,6 +41,7 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
     else:
         date_range.append((start_dt, end_dt))
     print(date_range)
+    
     for start_dt, end_dt in date_range:
         query_string = {
             "serviceKey": service_key,
