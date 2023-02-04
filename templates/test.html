@@ -22,13 +22,13 @@
 
   <form method="post">
     {% csrf_token %}
-    <!-- form fields here -->
+    
     <input type="submit" value="Submit">
   </form>
   {% load cache %}
-  {% cache 500 items %}
-    <!-- content to cache here -->
-  {% endcache %}
+  {% comment %} {% cache 500 items %} {% endcomment %}
+    <h3>Randint: {{random_number}}</h3>
+  {% comment %} {% endcache %} {% endcomment %}
 
   {% if items|length > 5 %}
     There are many items.
