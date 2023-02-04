@@ -33,3 +33,25 @@ def get_client_ip(request):
         if ip == "127.0.0.1":
             return "1.233.22.33"
     return ip
+
+
+def test_view(request):
+    show_header = True
+    today = datetime.datetime(2022, 1, 1, 11, 11, 11)
+    items = ["item 1", "item 2", "item 3", "item 4", "item 5", "item 6"]
+    var = None
+    long_string = "이 문장은 매우 매우 매우 긴 문장입니다. 그래서 아쉽게도 Truncate 될 예정 입니다."
+    string = "Upper or lower?"
+    list_of_strings = ["string 1", "string 2", "string 3"]
+    boolean_value = True
+    context = {
+        'show_header': show_header,
+        'today': today,
+        'items': items,
+        'var': var,
+        'long_string': long_string,
+        'string': string,
+        'list_of_strings': list_of_strings,
+        'boolean_value': boolean_value,
+    }
+    return render(request, 'test.html', context)
