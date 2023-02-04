@@ -1,4 +1,5 @@
 import datetime
+import random
 
 import requests
 from django.shortcuts import render
@@ -44,6 +45,7 @@ def test_view(request):
     string = "Upper or lower?"
     list_of_strings = ["string 1", "string 2", "string 3"]
     boolean_value = True
+    random_number = random.randint(1, 1000)
     context = {
         'show_header': show_header,
         'today': today,
@@ -53,5 +55,6 @@ def test_view(request):
         'string': string,
         'list_of_strings': list_of_strings,
         'boolean_value': boolean_value,
+        "random_number": random_number,
     }
     return render(request, 'test.html', context)
