@@ -1,19 +1,82 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Home</title>
+  <title>우리동네 기상청</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
 </head>
 <body>
-  <button type="button" id="loginModalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
-    로그인
-  </button>
-  <button type="button" id="signupBtn" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#signupModal">
-    회원가입
-  </button>
-  <!-- Modal -->
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">우리동네 기상청</a>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <button class="btn btn-outline-primary me-md-2" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</button>
+        <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#signupModal">회원가입</button>
+      </div>
+    </div>
+  </nav>
   {% include "components/modal.html" with modal_id="loginModal" modal_title="로그인" modal_body="auth/login.html" ok_button_txt="로그인" without_footer=True %}
   {% include "components/modal.html" with modal_id="signupModal" modal_title="회원가입" modal_body="auth/signup.html" ok_button_txt="회원가입" without_footer=True %}
+
+</div>
+<div class="container">
+  <div class="row mt-3">
+    <div class="col align-self-center text-center">
+      <img src="https://i.ibb.co/F3k7JD2/free-icon-weather-forecast-6368753.png" alt="free-icon-weather-forecast-6368753">
+      <br>
+      <a class="" href="https://www.flaticon.com/kr/free-icons/-" title="일기 예보 아이콘">일기 예보 아이콘  제작자: Design Circle - Flaticon</a>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">오늘 비가 올지 궁금하신가요?</h5>
+          <p class="card-subtitle mb-2 text-muted">접속하신 위치는 {{ region }} 입니다.
+          <a class="text-primary text-decoration-underline">변경하기</a>
+          </p>
+        {% if has_region %}
+          <p class="card-text">지난 5일간의 날씨</p>
+        {% else %}
+          <p class="card-text">아쉽게도 {{ region }} 데이터가 없어요.. 하지만, 대신 서울의 지난 5일간 날씨를 보여드릴게요!</p>
+        {% endif %}
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">날짜</th>
+              <th scope="col">최고기온</th>
+              <th scope="col">최저기온</th>
+              <th scope="col">총 강수량</th>
+              <th scope="col">평균 습도</th>
+              <th scope="col">평균 풍속</th>
+              <th scope="col">풍향</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for weather in last_5_data %}
+            <tr>
+              <th scope="row">{{ weather.date }}</th>
+              <td>{{ weather.max_temp }}</td>
+              <td>{{ weather.min_temp }}</td>
+              <td>{{ weather.total_rain }}</td>
+              <td>{{ weather.avg_humidity }}</td>
+              <td>{{ weather.wind_speed }}</td>
+              <td>{{ weather.wind_direction|wind_direction }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </body>
 <script>
     //document.addEventListener("DOMContentLoaded", function() {
