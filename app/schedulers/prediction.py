@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 
 import pandas as pd
 from django.db.models import F
@@ -38,8 +38,7 @@ def create_model(station_location: StationLocation, start_date: date, end_date: 
     regressor = RandomForestRegressor(n_estimators=100)
     regressor.fit(X_train, y_train)
 
-    y_pred = regressor.predict(X_test)
-
+    # y_pred = regressor.predict(X_test)
     # accuracy = (y_pred > 0.5) == y_test
     # print("Accuracy:", accuracy.mean())
 
@@ -52,41 +51,3 @@ def create_model(station_location: StationLocation, start_date: date, end_date: 
         end_date=end_date,
         model_file_name=f"models_station_{station_location.pk}_{rev}.pkl",
     )
-
-
-def predict(station_location: StationLocation, date_: date = None):
-    if not date_:
-        yesterday = Weather.objects.filter(location=station_location).order_by("-date").first().date
-    else:
-        yesterday = date_ - timedelta(days=1)
-
-    model = WeatherPredictModel.objects.filter(location=station_location).first()
-
-    if not model:
-        min_date = Weather.objects.filter(location=station_location).order_by("date").first().date
-        max_date = Weather.objects.filter(location=station_location).order_by("-date").first().date
-        create_model(station_location, min_date, max_date)
-        model = WeatherPredictModel.objects.filter(location=station_location).first()
-
-    regressor = joblib.load(BASE_DIR / f"app/prediction_models/{model.model_file_name}")
-
-    yesterday_weather = Weather.objects.filter(location=station_location, date=yesterday).annotate(
-        date_month=F("date__month")
-    )
-    today_weather = yesterday_weather.values(
-        "date_month",
-        "max_temp",
-        "min_temp",
-        "avg_humidity",
-        "wind_speed",
-        "wind_direction",
-        "avg_pa",
-    ).first()
-    today_df = pd.DataFrame(today_weather, index=[0])
-
-    today_prediction = regressor.predict(today_df)
-    print(today_prediction)
-    print(today_prediction > 0.5)
-    if today_prediction > 0.5:
-        return True
-    return False

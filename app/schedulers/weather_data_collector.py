@@ -23,28 +23,8 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
     end_dt = end_date if end_date else start_date
     stn_ids = station_location.kma_station_code
     count_per_request = 60
+    date_range = get_data_range(start_dt, end_dt, count_per_request)
 
-    date_range = []
-    # if the gap between start date and end date is more than 1 month, split the date range into 1 month and append to date_range as a tuple
-    if (
-        datetime.strptime(end_dt, "%Y%m%d").date() - datetime.strptime(start_dt, "%Y%m%d").date()
-    ).days > count_per_request:
-        start_date = datetime.strptime(start_dt, "%Y%m%d").date()
-        end_date = datetime.strptime(end_dt, "%Y%m%d").date()
-        while start_date <= end_date:
-            done = False
-            if start_date + timedelta(days=count_per_request) > end_date:
-                end_date_str = end_date.strftime("%Y%m%d")
-                done = True
-            else:
-                end_date_str = (start_date + timedelta(days=count_per_request)).strftime("%Y%m%d")
-            date_range.append((start_date.strftime("%Y%m%d"), end_date_str))
-            start_date = start_date + timedelta(days=count_per_request + 1)
-            if done:
-                break
-    else:
-        date_range.append((start_dt, end_dt))
-    print(date_range)
     for start_dt, end_dt in date_range:
         min_date = datetime.strptime(start_dt, "%Y%m%d").date()
         max_date = datetime.strptime(end_dt, "%Y%m%d").date()
@@ -62,7 +42,6 @@ def collect_load_weather_data(station_location: StationLocation, start_date: str
         url = "http://apis.data.go.kr/1360000/AsosDalyInfoService/getWthrDataList"
         response = requests.get(url, params=query_string)
         res = response.json()
-        print(res)
         is_ok = check_status(res)
         if is_ok:
             result: List[dict] = parse_data(res)
@@ -99,6 +78,29 @@ def parse_data(res):
             }
         )
     return result
+
+
+def get_data_range(start_dt, end_dt, count_per_request: int):
+    date_range = []
+    if (
+        datetime.strptime(end_dt, "%Y%m%d").date() - datetime.strptime(start_dt, "%Y%m%d").date()
+    ).days > count_per_request:
+        start_date = datetime.strptime(start_dt, "%Y%m%d").date()
+        end_date = datetime.strptime(end_dt, "%Y%m%d").date()
+        while start_date <= end_date:
+            done = False
+            if start_date + timedelta(days=count_per_request) > end_date:
+                end_date_str = end_date.strftime("%Y%m%d")
+                done = True
+            else:
+                end_date_str = (start_date + timedelta(days=count_per_request)).strftime("%Y%m%d")
+            date_range.append((start_date.strftime("%Y%m%d"), end_date_str))
+            start_date = start_date + timedelta(days=count_per_request + 1)
+            if done:
+                break
+    else:
+        date_range.append((start_dt, end_dt))
+    return date_range
 
 
 @transaction.atomic

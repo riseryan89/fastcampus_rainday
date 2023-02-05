@@ -1,7 +1,5 @@
 from django.db import models
 
-from app.models import User
-
 
 class StationLocation(models.Model):
     class Provinces(models.TextChoices):
@@ -61,6 +59,14 @@ class Weather(models.Model):
         indexes = [
             models.indexes.Index(fields=["location", "date"], name="ix_weather_location_date_time"),
         ]
+
+    @classmethod
+    def get_data_range(cls, location: StationLocation):
+        return cls.objects.filter(location=location).aggregate(min_date=models.Min("date"), max_date=models.Max("date"))
+
+    @classmethod
+    def get_last_data(cls, location: StationLocation):
+        return cls.objects.filter(location=location).order_by("-date").first()
 
 
 class WeatherPredictModel(models.Model):

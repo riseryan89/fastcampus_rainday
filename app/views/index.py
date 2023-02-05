@@ -1,15 +1,16 @@
 import datetime
-import random
 
+import joblib
 import requests
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
 
 from app.forms.auth_forms import LoginForm, SignupForm
 from app.forms.subscribe_form import LocationSubscribeForm
-from app.models import StationLocation, Weather
-from app.schedulers.prediction import create_model, predict
-from app.schedulers.weather_data_collector import collect_load_weather_data
+from app.models import StationLocation, Weather, WeatherPredictModel
+from app.schedulers.prediction import create_model
+import pandas as pd
+from rainday.settings import BASE_DIR
 
 
 def index(request):
@@ -36,8 +37,7 @@ def index(request):
     station_location = StationLocation.objects.get(kma_station_code=kma_station_code)
     last_5_data = Weather.objects.filter(location=station_location).order_by("-date")[:5]
     if request.user.is_authenticated:
-        subscribed_locations = request.user.locations.all().values_list("id", flat=True)
-        subscribe_form = LocationSubscribeForm(initial={"checkbox_field": list(subscribed_locations)})
+        subscribe_form = LocationSubscribeForm(initial={"checkbox_field": list(request.user.subscribed_location_ids())})
     else:
         subscribe_form = LocationSubscribeForm()
     context = {
@@ -83,10 +83,7 @@ def index(request):
         elif submit_type == "subscription":
             form = LocationSubscribeForm(data=request.POST)
             selected_locations = form.data.get("checkbox_field", [])
-            request.user.locations.clear()
-            if selected_locations:
-                location = StationLocation.objects.filter(id__in=selected_locations)
-                request.user.locations.set(location)
+            request.user.refresh_subscriptions(selected_locations)
             return redirect("home")
 
         return render(request, "index.html", context)
@@ -104,3 +101,37 @@ def get_client_ip(request):
         if ip == "127.0.0.1":
             return "1.233.22.33"
     return ip
+
+
+def predict(station_location: StationLocation, date_: datetime.date = None):
+    if not date_:
+        yesterday = Weather.get_last_data(station_location).date
+    else:
+        yesterday = date_ - datetime.timedelta(days=1)
+
+    model = WeatherPredictModel.objects.filter(location=station_location).first()
+    if not model:
+        date_range = Weather.get_data_range(station_location)
+        create_model(station_location, date_range.get("min_date"), date_range.get("max_date"))
+        model = WeatherPredictModel.objects.filter(location=station_location).first()
+
+    regressor = joblib.load(BASE_DIR / f"app/prediction_models/{model.model_file_name}")
+
+    yesterday_weather = Weather.objects.filter(location=station_location, date=yesterday).annotate(
+        date_month=F("date__month")
+    )
+    today_weather = yesterday_weather.values(
+        "date_month",
+        "max_temp",
+        "min_temp",
+        "avg_humidity",
+        "wind_speed",
+        "wind_direction",
+        "avg_pa",
+    ).first()
+    today_df = pd.DataFrame(today_weather, index=[0])
+
+    today_prediction = regressor.predict(today_df)
+    if today_prediction > 0.5:
+        return True
+    return False
