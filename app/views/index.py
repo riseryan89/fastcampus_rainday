@@ -7,6 +7,7 @@ from django.shortcuts import render, redirect
 
 from app.forms.auth_forms import LoginForm, SignupForm
 from app.forms.subscribe_form import LocationSubscribeForm
+from app.forms.test_form import TestForm
 from app.models import StationLocation, Weather, WeatherPredictModel
 from app.schedulers.prediction import create_model
 import pandas as pd
@@ -135,3 +136,15 @@ def predict(station_location: StationLocation, date_: datetime.date = None):
     if today_prediction > 0.5:
         return True
     return False
+
+
+def form_test(request):
+    if request.method == "POST":
+        form = TestForm(data=request.POST)
+        if form.is_valid():
+            ...
+        return render(request, "form_test.html", {"form": form})
+
+    else:
+        form = TestForm()
+        return render(request, "form_test.html", {"form": form})
