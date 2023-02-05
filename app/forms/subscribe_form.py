@@ -7,6 +7,5 @@ class LocationSubscribeForm(forms.Form):
         (2, "서울"),
     ]
     checkbox_field = forms.MultipleChoiceField(
-        widget=forms.CheckboxSelectMultiple,
         choices=choices,
     )

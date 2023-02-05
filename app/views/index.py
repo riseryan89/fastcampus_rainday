@@ -82,11 +82,12 @@ def index(request):
 
         elif submit_type == "subscription":
             form = LocationSubscribeForm(data=request.POST)
-            selected_locations = form.data.get("checkbox_field", [])
-            request.user.locations.clear()
-            if selected_locations:
-                location = StationLocation.objects.filter(id__in=selected_locations)
-                request.user.locations.set(location)
+            if form.is_valid():
+                selected_locations = form.cleaned_data["checkbox_field"]
+                request.user.locations.clear()
+                if selected_locations:
+                    location = StationLocation.objects.filter(id__in=selected_locations)
+                    request.user.locations.set(location)
             return redirect("home")
 
         return render(request, "index.html", context)
