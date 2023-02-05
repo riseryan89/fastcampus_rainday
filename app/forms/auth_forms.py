@@ -11,8 +11,7 @@ class LoginForm(AuthenticationForm):
         label="Username",
         widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Username"}),
         error_messages={
-            "invalid": "잘못된 로그인 정보 입니다.",
-            "inactive": "비활성화된 계정입니다.",
+            "invalid_login": "잘못된 유저네임 이잖아~~",
         },
     )
     password = forms.CharField(

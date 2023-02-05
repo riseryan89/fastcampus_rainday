@@ -1,31 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>회원가입</title>
-</head>
-<body>
-<form method="post">
-  <div class="form-group">
-    <label for="username">사용자명</label>
-    <input type="text" class="form-control" id="username" placeholder="사용자명">
+<form method="post" action="{% url 'home' %}?type=signup">
+  {% csrf_token %}
+  <div class="form-group mt-3">
+      <label for="{{ signup_form.username.id_for_label }}">사용자명</label>
+      {{ signup_form.username }}
+      {% if signup_form.username.errors %}
+          <div class="text-danger">{{ signup_form.username.errors }}</div>
+      {% endif %}
+      {% if signup_form.non_field_errors %}
+          <div class="text-danger">{{ signup_form.non_field_errors }}</div>
+      {% endif %}
   </div>
   <div class="form-group mt-3">
-    <label for="username">이메일</label>
-    <input type="email" class="form-control" id="username" placeholder="이메일">
+      <label for="{{ signup_form.email.id_for_label }}">패스워드</label>
+      {{ signup_form.email }}
+      {% if signup_form.email.errors %}
+          <div class="text-danger">{{ signup_form.email.errors }}</div>
+      {% endif %}
   </div>
   <div class="form-group mt-3">
-    <label for="password">패스워드</label>
-    <input type="password" class="form-control" id="password" placeholder="패스워드">
+      <label for="{{ signup_form.password.id_for_label }}">패스워드</label>
+      {{ signup_form.password1 }}
+      {% if signup_form.password1.errors %}
+          <div class="text-danger">{{ signup_form.password1.errors }}</div>
+      {% endif %}
   </div>
   <div class="form-group mt-3">
-    <label for="password">패스워드 확인</label>
-    <input type="password" class="form-control" id="confirmPassword" placeholder="패스워드 확인">
+      <label for="{{ signup_form.password2.id_for_label }}">패스워드 확인</label>
+      {{ signup_form.password2 }}
+      {% if signup_form.password2.errors %}
+          <div class="text-danger">{{ signup_form.password2.errors }}</div>
+      {% endif %}
   </div>
   <div class="text-center mt-5">
-    <button type="submit" class="btn btn-primary">회원가입</button>
+    <button type="submit" class="btn btn-primary">로그인</button>
   </div>
 </form>
-
-</body>
-</html>

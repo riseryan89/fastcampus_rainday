@@ -40,8 +40,8 @@ def create_model(station_location: StationLocation, start_date: date, end_date: 
 
     y_pred = regressor.predict(X_test)
 
-    accuracy = (y_pred > 0.5) == y_test
-    print("Accuracy:", accuracy.mean())
+    # accuracy = (y_pred > 0.5) == y_test
+    # print("Accuracy:", accuracy.mean())
 
     rev = WeatherPredictModel.get_revision(station_location)
 
@@ -54,9 +54,19 @@ def create_model(station_location: StationLocation, start_date: date, end_date: 
     )
 
 
-def predict(station_location: StationLocation, date_: date):
-    yesterday = date_ - timedelta(days=1)
+def predict(station_location: StationLocation, date_: date = None):
+    if not date_:
+        yesterday = Weather.objects.filter(location=station_location).order_by("-date").first().date
+    else:
+        yesterday = date_ - timedelta(days=1)
+
     model = WeatherPredictModel.objects.filter(location=station_location).first()
+
+    if not model:
+        min_date = Weather.objects.filter(location=station_location).order_by("date").first().date
+        max_date = Weather.objects.filter(location=station_location).order_by("-date").first().date
+        create_model(station_location, min_date, max_date)
+        model = WeatherPredictModel.objects.filter(location=station_location).first()
 
     regressor = joblib.load(BASE_DIR / f"app/prediction_models/{model.model_file_name}")
 

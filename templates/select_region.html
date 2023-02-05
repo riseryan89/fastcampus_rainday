@@ -1,0 +1,28 @@
+<div class="form-group">
+  <select class="form-control" id="regionSelect">
+    <option value="0">지금 내 위치</option>
+    {% for location in locations %}
+    <option value="{{ location.id }}">{{ location.station_name }}</option>
+    {% endfor %}
+  </select>
+  <div class="text-center mt-5">
+    <button type="button" class="btn btn-primary" id="regionBtn">선택하기</button>
+  </div>
+</div>
+<script>
+    const select = document.getElementById('regionSelect');
+    let region = select.options[select.selectedIndex].value;
+    select.addEventListener('change', function() {
+        region = select.options[select.selectedIndex].value;
+    });
+    const btn = document.getElementById('regionBtn');
+    btn.addEventListener('click', function() {
+        if (region === '0') {
+            location.href = '/';
+        } else {
+            location.href = '/?station_id=' + region;
+        }
+    });
+
+</script>
+
