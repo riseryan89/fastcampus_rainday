@@ -1,0 +1,19 @@
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">우리동네 기상청</a>
+      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        {% if not user.is_authenticated %}
+        <button class="btn btn-outline-primary me-md-2" id="loginModalBtn" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</button>
+        <button class="btn btn-primary" id="signupModalBtn" type="button" data-bs-toggle="modal" data-bs-target="#signupModal">회원가입</button>
+        {% else %}
+        <div class="d-flex align-items-center">
+          <span class="me-2">안녕하세요, {{ user.username }}님</span>
+          <a class="btn btn-outline-primary me-md-2" href="{% url 'logout' %}">로그아웃</a>        {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+  {% if not user.is_authenticated %}
+  {% include "components/modal.html" with modal_id="loginModal" modal_title="로그인" modal_body="auth/login.html" ok_button_txt="로그인" without_footer=True %}
+  {% include "components/modal.html" with modal_id="signupModal" modal_title="회원가입" modal_body="auth/signup.html" ok_button_txt="회원가입" without_footer=True %}
+  {% endif %}

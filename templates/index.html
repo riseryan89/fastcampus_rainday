@@ -1,4 +1,3 @@
-{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,25 +9,7 @@
 </head>
 <body>
 <div class="container-fluid">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="/">우리동네 기상청</a>
-      <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-        {% if not user.is_authenticated %}
-        <button class="btn btn-outline-primary me-md-2" id="loginModalBtn" type="button" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</button>
-        <button class="btn btn-primary" id="signupModalBtn" type="button" data-bs-toggle="modal" data-bs-target="#signupModal">회원가입</button>
-        {% else %}
-        <div class="d-flex align-items-center">
-          <span class="me-2">안녕하세요, {{ user.username }}님</span>
-          <a class="btn btn-outline-primary me-md-2" href="{% url 'logout' %}">로그아웃</a>        {% endif %}
-        </div>
-      </div>
-    </div>
-  </nav>
-  {% if not user.is_authenticated %}
-  {% include "components/modal.html" with modal_id="loginModal" modal_title="로그인" modal_body="auth/login.html" ok_button_txt="로그인" without_footer=True %}
-  {% include "components/modal.html" with modal_id="signupModal" modal_title="회원가입" modal_body="auth/signup.html" ok_button_txt="회원가입" without_footer=True %}
-  {% endif %}
+  {% include 'top_navbar.html' %}
 </div>
 <div class="container">
   <div class="row mt-3">
@@ -42,7 +23,18 @@
     <div class="col-12">
       <div class="card">
         <div class="card-body">
+{#          I want to place button at the end of h5 tag and put space between max#}
+        <div class="row justify-content-between">
+          <div class="col">
           <h5 class="card-title">오늘 비가 올지 궁금하신가요?</h5>
+          </div>
+          <div class="col">
+            {% if user.is_authenticated %}
+            <button class="btn btn-primary float-end" type="button" data-bs-toggle="modal" data-bs-target="#subscriptionModal">구독 관리</button>
+            {% endif %}
+          </div>
+        </div>
+
           <h6 class="card-title my-3"><mark>오늘은
             {% if selected_region %}{{ selected_region }}{% else %}{{ region }}{% endif %}
             에 비가
@@ -62,42 +54,17 @@
             <span class="text-danger">선택하신 {{ selected_region }}</span>의 지난 5일간의 날씨 입니다.
           </p>
         {% endif %}
-          <table class="table table-striped">
-            <thead>
-            <tr>
-              <th scope="col">날짜</th>
-              <th scope="col">최고기온</th>
-              <th scope="col">최저기온</th>
-              <th scope="col">총 강수량</th>
-              <th scope="col">평균 습도</th>
-              <th scope="col">평균 풍속</th>
-              <th scope="col">풍향</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for weather in last_5_data %}
-            <tr>
-              <th scope="row">{{ weather.date }}</th>
-              <td>{{ weather.max_temp }} ℃</td>
-              <td>{{ weather.min_temp }} ℃</td>
-              <td>{{ weather.total_rain|floatformat:"1" }} mm</td>
-              <td>{{ weather.avg_humidity }} %</td>
-              <td>{{ weather.wind_speed }} m/s</td>
-              <td>{{ weather.wind_direction|wind_direction }}</td>
-            </tr>
-            {% endfor %}
-            </tbody>
-          </table>
-{#        내일은 selected region에 비가 올 예정입니다. 표시#}
-
-
+        {% include 'weather_table.html' %}
+        {% if user.is_authenticated %}
+        {% include "components/modal.html" with modal_id="subscriptionModal" modal_title="구독 관리" modal_body="subscription_checkbox.html" ok_button_txt="구독" without_footer=True %}
+        {% endif %}
         {% include "components/modal.html" with modal_id="regionSelectModal" modal_title="지역 선택" modal_body="select_region.html" ok_button_txt="지역 변경" without_footer=True %}
         </div>
       </div>
     </div>
   </div>
 </div>
-{{ form_error }}
+
 
 </body>
 <script>

@@ -1,0 +1,14 @@
+<form method="post" action="{% url 'home' %}?type=subscription">
+  {% csrf_token %}
+  <div class="form-group">
+    {% for choice in subscribe_form.checkbox_field.field.choices %}
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="checkbox_field" id="{{ choice.0 }}" value="{{ choice.0 }}" {% if choice.0 in subscribe_form.checkbox_field.value %}checked{% endif %}>
+        <label class="form-check-label" for="{{ choice.0 }}">{{ choice.1 }}</label>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="text-center mt-5">
+    <button type="submit" class="btn btn-primary">저장</button>
+  </div>
+</form>

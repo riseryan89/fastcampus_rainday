@@ -1,0 +1,27 @@
+{% load custom_filters %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">날짜</th>
+      <th scope="col">최고기온</th>
+      <th scope="col">최저기온</th>
+      <th scope="col">총 강수량</th>
+      <th scope="col">평균 습도</th>
+      <th scope="col">평균 풍속</th>
+      <th scope="col">풍향</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for weather in last_5_data %}
+    <tr>
+      <th scope="row">{{ weather.date }}</th>
+      <td>{{ weather.max_temp }} ℃</td>
+      <td>{{ weather.min_temp }} ℃</td>
+      <td>{{ weather.total_rain|floatformat:"1" }} mm</td>
+      <td>{{ weather.avg_humidity }} %</td>
+      <td>{{ weather.wind_speed }} m/s</td>
+      <td>{{ weather.wind_direction|wind_direction }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
