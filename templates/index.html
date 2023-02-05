@@ -5,17 +5,20 @@
   <title>Home</title>
 </head>
 <body>
-  <h1>this page is HOME!</h1>
-  {% if user.is_authenticated %}
-  <p>Hello, {{ user.username }}!</p>
-  <a href="{% url 'logout' %}">로그아웃!</a>
-  {% else %}
-  <p>Hello! Guest!</p>
-  <a href="{% url 'login' %}">로그인!</a>
-  {% endif %}
-
-  <p>당신은 지금 {{ city }} 에서 접속 중입니다.</p>
-
-
+  <button type="button" id="loginModalBtn" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+    로그인
+  </button>
+  <button type="button" id="signupBtn" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#signupModal">
+    회원가입
+  </button>
+  <!-- Modal -->
+  {% include "components/modal.html" with modal_id="loginModal" modal_title="로그인" modal_body="auth/login.html" ok_button_txt="로그인" without_footer=True %}
+  {% include "components/modal.html" with modal_id="signupModal" modal_title="회원가입" modal_body="auth/signup.html" ok_button_txt="회원가입" without_footer=True %}
 </body>
+<script>
+    //document.addEventListener("DOMContentLoaded", function() {
+    //    const modalObj = document.getElementById('loginModalBtn');
+    //    modalObj.click();
+    //});
+</script>
 </html>
