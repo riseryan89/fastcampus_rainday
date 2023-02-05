@@ -11,15 +11,16 @@
   <h2>표시된 날짜: {{ today|date:"DATETIME_FORMAT" }}</h2>
   <h2>내가 원하는 포멧으로 : {{ today|date:"Y-m-d h:i:s" }}</h2>
 
+  {% include "foo.html" %}
   {% for item in items %}
-    <p>{{ forloop.counter }}: {{ item }}</p>
+  <p>{{ forloop.counter }}: {{ item }}</p>
+    {% include "foo.html" with item=item %}
   {% endfor %}
 
-  {% include "foo.html" %}
+  
 
-  {% url 'view_name' arg1 arg2 as the_url %}
+  {% url 'test2' 'arg1' 'arg2' as the_url %}
   <a href="{{ the_url }}">Link to view</a>
-
   <form method="post">
     {% csrf_token %}
     

@@ -58,3 +58,7 @@ def test_view(request):
         "random_number": random_number,
     }
     return render(request, 'test.html', context)
+
+
+def test_view2(request, arg1, arg2):
+    return render(request, 'test.html', {})
