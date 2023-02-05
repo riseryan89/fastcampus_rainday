@@ -47,18 +47,18 @@ def test_view(request):
     boolean_value = True
     random_number = random.randint(1, 1000)
     context = {
-        'show_header': show_header,
-        'today': today,
-        'items': items,
-        'var': var,
-        'long_string': long_string,
-        'string': string,
-        'list_of_strings': list_of_strings,
-        'boolean_value': boolean_value,
+        "show_header": show_header,
+        "today": today,
+        "items": items,
+        "var": var,
+        "long_string": long_string,
+        "string": string,
+        "list_of_strings": list_of_strings,
+        "boolean_value": boolean_value,
         "random_number": random_number,
     }
-    return render(request, 'test.html', context)
+    return render(request, "test.html", context)
 
 
 def test_view2(request, arg1, arg2):
-    return render(request, 'test.html', {})
+    return render(request, "test.html", {})
