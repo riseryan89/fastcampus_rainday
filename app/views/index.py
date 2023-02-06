@@ -1,3 +1,5 @@
+import os
+
 import requests
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
@@ -36,8 +38,9 @@ def index(request):
         subscribe_form = LocationSubscribeForm(initial={"checkbox_field": list(request.user.subscribed_location_ids())})
     else:
         subscribe_form = LocationSubscribeForm()
+
     context = {
-        "hello": "hello world",
+        "hello": os.environ.get("ENV_VAR_NAME1"),
         "region": region,
         "selected_region": selected_region,
         "has_region": has_region,
