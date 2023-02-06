@@ -1,0 +1,7 @@
+{
+    "GMAIL_AUTH": "${GMAIL_AUTH}",
+    "GMAIL_ADDR": "${GMAIL_ADDR}",
+    "DB_HOST": "${DB_HOST}",
+    "DB_USER": "${DB_USER}",
+    "DB_PASS": "${DB_PASS}"
+}
