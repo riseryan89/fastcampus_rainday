@@ -1,33 +1,36 @@
-name: Deploy to GCP
-
+name: Deploy to App Engine
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
-  workflow_dispatch:
+env:
+  ENV_VAR_NAME1: value1
+  ENV_VAR_NAME2: value2
 
 jobs:
   deploy:
-    name: Deploying to Google Cloud
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
+    - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Deploy to App Engine
-      id: deploy
-      uses: google-github-actions/deploy-appengine@v0.2.0
+    - name: Configure Google Cloud CLI
+      uses: google-github-actions/setup-gcloud@v2
       with:
-        deliverables: app.yaml
-        version: v1
-        project_id: ${{ secrets.GCP_PROJECT }}
-        credentials: ${{ secrets.GCP_CREDENTIALS }}
+        service_account_email: ${{ secrets.GCP_SA_EMAIL }}
+        project_id: ${{ env.PROJECT_ID }}
 
-    - name: Install dependencies
+    - name: Update app.yaml
       run: |
-        python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        echo "Updating env_variables in app.yaml..."
+        sed -i -e "s/ENV_VAR_NAME1:.*/ENV_VAR_NAME1: ${{ env.ENV_VAR_NAME1 }}/g" app.yaml
+        sed -i -e "s/ENV_VAR_NAME2:.*/ENV_VAR_NAME2: ${{ env.ENV_VAR_NAME2 }}/g" app.yaml
+        ...
+
+    - name: Deploy to App Engine
+      uses: google-github-actions/deploy-appengine@v1.1.0
+      with:
+        project_id: ${{ env.PROJECT_ID }}
