@@ -5,7 +5,7 @@ import pandas as pd
 from django.db.models import F
 
 from app.models import StationLocation, WeatherPredictModel, Weather
-from app.schedulers.prediction import create_model
+from app.utils.create_model import create_model
 from rainday.settings import BASE_DIR
 
 

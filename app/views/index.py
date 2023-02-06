@@ -78,7 +78,10 @@ def index(request):
 
         elif submit_type == "subscription":
             form = LocationSubscribeForm(data=request.POST)
-            selected_locations = form.data.get("checkbox_field", [])
+            if form.is_valid():
+                selected_locations = form.cleaned_data["checkbox_field"]
+            else:
+                selected_locations = []
             request.user.refresh_subscriptions(selected_locations)
             return redirect("home")
 

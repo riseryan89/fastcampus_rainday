@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 
 from app.models import User, EmailHistory
-from app.utils.predict import predict
+from app.utils import predict
 from rainday.settings import EMAIL_HOST_USER
 
 
