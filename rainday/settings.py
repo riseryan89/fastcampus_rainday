@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-**a)w#p&5&yenp4i*o$7%zd@juu*@=4+zcbij5oj%wt052%q)(
 if sys().lower().startswith("windows") or sys().lower().startswith("darwin"):
     DEBUG = True
 else:
-    DEBUG = False
+    DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
