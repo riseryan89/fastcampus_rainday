@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 from app.models import StationLocation
+from app.schedulers import db_auto_reconnect
 from app.utils import collect_load_weather_data
 
 
+@db_auto_reconnect
 def scheduled_collection():
     print("scheduled_collection")
     station_locations = StationLocation.objects.all()

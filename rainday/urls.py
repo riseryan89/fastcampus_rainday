@@ -18,7 +18,6 @@ from django.urls import path, include
 from app import urls
 from django.contrib.auth import views as a_v
 
-from app.schedulers import scheduled_jobs
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -26,5 +25,3 @@ urlpatterns = [
     path("auth/pw-change", a_v.PasswordChangeView.as_view(template_name="pw-change.html"), name="pw-change"),
     path("", include(urls)),
 ]
-
-scheduled_jobs()

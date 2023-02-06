@@ -1,10 +1,12 @@
 from django.core.mail import send_mail
 
 from app.models import User, EmailHistory
+from app.schedulers.re_connect_db import db_auto_reconnect
 from app.utils import predict
 from rainday.settings import EMAIL_HOST_USER
 
 
+@db_auto_reconnect
 def send_email():
     users = User.objects.filter(locations__isnull=False, is_staff=False, is_superuser=False, is_active=True).distinct()
     for user in users:
