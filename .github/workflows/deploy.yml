@@ -26,18 +26,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Update app.yaml
-      run: |
-        echo "Updating env_variables in app.yaml..."
-        sed -i -e "s/DB_PASS:.*/DB_PASS: ${{ secrets.DB_PASS }}/g" app.yaml
-        sed -i -e "s/DB_USER:.*/DB_USER: ${{ secrets.DB_USER }}/g" app.yaml
-        sed -i -e "s/DB_HOST:.*/DB_HOST: ${{ secrets.DB_HOST }}/g" app.yaml
-
     - name: Deploy to App Engine
       id: deploy
       uses: google-github-actions/deploy-appengine@v0.2.0
       with:
         deliverables: app.yaml
+        env_vars: DB_PASS=${{ secrets.DB_PASS }},DB_USER=${{ secrets.DB_USER }},DB_HOST=${{ secrets.DB_HOST }}
         version: v1
         project_id: ${{ secrets.GCP_PROJECT }}
         credentials: ${{ secrets.GCP_CREDENTIALS }}
