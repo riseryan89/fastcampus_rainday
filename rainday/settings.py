@@ -34,7 +34,7 @@ SECRET_KEY = "django-insecure-**a)w#p&5&yenp4i*o$7%zd@juu*@=4+zcbij5oj%wt052%q)(
 if sys().lower().startswith("windows") or sys().lower().startswith("darwin"):
     DEBUG = True
 else:
-    DEBUG = False
+    DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -85,36 +85,36 @@ AUTH_USER_MODEL = "app.User"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if DEBUG:
-    DATABASES = {
-        "default": {
-            "NAME": "rainday",
-            "ENGINE": "django.db.backends.mysql",
-            "USER": "rainday_app",
-            "PASSWORD": "rainday_app_dev_1",
-            "HOST": "127.0.0.1",
-            "PORT": "3306",
-            "OPTIONS": {
-                "autocommit": True,
-                "charset": "utf8mb4",
-            },
-        }
+# if DEBUG:
+#     DATABASES = {
+#         "default": {
+#             "NAME": "rainday",
+#             "ENGINE": "django.db.backends.mysql",
+#             "USER": "rainday_app",
+#             "PASSWORD": "rainday_app_dev_1",
+#             "HOST": "127.0.0.1",
+#             "PORT": "3306",
+#             "OPTIONS": {
+#                 "autocommit": True,
+#                 "charset": "utf8mb4",
+#             },
+#         }
+#     }
+# else:
+DATABASES = {
+    "default": {
+        "NAME": "rainday",
+        "ENGINE": "django.db.backends.mysql",
+        "USER": ENV_FILE.get("DB_USER"),
+        "PASSWORD": ENV_FILE.get("DB_PASS"),
+        "HOST": ENV_FILE.get("DB_HOST"),
+        "PORT": "3306",
+        "OPTIONS": {
+            "autocommit": True,
+            "charset": "utf8mb4",
+        },
     }
-else:
-    DATABASES = {
-        "default": {
-            "NAME": "rainday",
-            "ENGINE": "django.db.backends.mysql",
-            "USER": ENV_FILE.get("DB_USER"),
-            "PASSWORD": ENV_FILE.get("DB_PASS"),
-            "HOST": ENV_FILE.get("DB_HOST"),
-            "PORT": "3306",
-            "OPTIONS": {
-                "autocommit": True,
-                "charset": "utf8mb4",
-            },
-        }
-    }
+}
 
 
 # Password validation
