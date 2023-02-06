@@ -19,9 +19,7 @@ def index(request):
     selected_region = None
     has_region = True
     all_location = StationLocation.objects.all()
-    if region == "Gyeonggi-do":
-        kma_station_code = "133"
-    elif region == "Seoul":
+    if region == "Seoul":
         kma_station_code = "108"
     else:
         kma_station_code = "108"
