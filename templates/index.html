@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>우리동네 기상청</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+
+</head>
+<body>
+<div class="container-fluid">
+  {% include 'top_navbar.html' %}
+</div>
+<div class="container">
+  <div class="row mt-3">
+    <div class="col align-self-center text-center">
+      <img src="https://i.ibb.co/F3k7JD2/free-icon-weather-forecast-6368753.png" alt="free-icon-weather-forecast-6368753">
+      <br>
+      <a class="" href="https://www.flaticon.com/kr/free-icons/-" title="일기 예보 아이콘">일기 예보 아이콘  제작자: Design Circle - Flaticon</a>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+{#          I want to place button at the end of h5 tag and put space between max#}
+        <div class="row justify-content-between">
+          <div class="col">
+          <h5 class="card-title">오늘 비가 올지 궁금하신가요?</h5>
+          </div>
+          <div class="col">
+            {% if user.is_authenticated %}
+            <button class="btn btn-primary float-end" type="button" data-bs-toggle="modal" data-bs-target="#subscriptionModal">구독 관리</button>
+            {% endif %}
+          </div>
+        </div>
+
+          <h6 class="card-title my-3"><mark>오늘은
+            {% if selected_region %}{{ selected_region }}{% else %}{{ region }}{% endif %}
+            에 비가
+            {% if prediction %}올{% else %}오지 않을{% endif %} 예정입니다.
+            {% if prediction %}☔{% else %}☀️{% endif %}
+          </mark>
+          </h6>
+          <p class="card-subtitle mb-2 text-muted">접속하신 위치는 {{ region }} 입니다.
+          <a class="text-primary text-decoration-underline" href="#" data-bs-toggle="modal" data-bs-target="#regionSelectModal">변경하기</a>
+          </p>
+        {% if has_region is True %}
+          <p class="card-text">지난 5일간의 날씨</p>
+        {% elif has_region is False %}
+          <p class="card-text">아쉽게도 {{ region }} 데이터가 없어요.. 하지만, 대신 서울의 지난 5일간 날씨를 보여드릴게요!</p>
+        {% else %}
+          <p class="card-text">
+            <span class="text-danger">선택하신 {{ selected_region }}</span>의 지난 5일간의 날씨 입니다.
+          </p>
+        {% endif %}
+        {% include 'weather_table.html' %}
+        {% if user.is_authenticated %}
+        {% include "components/modal.html" with modal_id="subscriptionModal" modal_title="구독 관리" modal_body="subscription_checkbox.html" ok_button_txt="구독" without_footer=True %}
+        {% endif %}
+        {% include "components/modal.html" with modal_id="regionSelectModal" modal_title="지역 선택" modal_body="select_region.html" ok_button_txt="지역 변경" without_footer=True %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</body>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        if ('{{ form_error }}' === 'signup') {
+          const signupModalBtn = document.getElementById('signupModalBtn');
+          signupModalBtn.click();
+        } else if ('{{ form_error }}' === 'login') {
+          const loginModalBtn = document.getElementById('loginModalBtn');
+          loginModalBtn.click();
+        }
+
+    });
+</script>
+</html>

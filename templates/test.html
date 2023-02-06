@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>템플릿 훈련</title>
+</head>
+<body>
+  {% if show_header %}
+    <h1>웹사이트에 오신 것을 환영합니다.</h1>
+  {% endif %}
+
+  <h2>표시된 날짜: {{ today|date:"DATETIME_FORMAT" }}</h2>
+  <h2>내가 원하는 포멧으로 : {{ today|date:"Y-m-d h:i:s" }}</h2>
+
+  {% include "foo.html" %}
+  {% for item in items %}
+  <p>{{ forloop.counter }}: {{ item }}</p>
+    {% include "foo.html" with item=item %}
+  {% endfor %}
+
+  
+
+  {% url 'test2' 'arg1' 'arg2' as the_url %}
+  <a href="{{ the_url }}">Link to view</a>
+  <form method="post">
+    {% csrf_token %}
+    
+    <input type="submit" value="Submit">
+  </form>
+  {% load cache %}
+  {% comment %} {% cache 500 items %} {% endcomment %}
+    <h3>Randint: {{random_number}}</h3>
+  {% comment %} {% endcache %} {% endcomment %}
+
+  {% if items|length > 5 %}
+    There are many items.
+  {% else %}
+    There are only a few items.
+  {% endif %}
+  <p>
+    {% verbatim  %}{{ var }} :{% endverbatim  %}
+    {{var}},
+    {{ var|default:"var is None" }}
+  </p>
+  <p>{{ long_string|truncatewords:5 }}...</p>
+  <p>{{ long_string|truncatechars:5 }}...</p>
+  
+  <p>{{ string|upper }}</p>
+  
+  <p>{{ string|lower }}</p>
+  
+  <p>{{ list_of_strings|join:", " }}</p>
+  
+  <p>{{ boolean_value|yesno:"Yes,No" }}</p>
+  <p>{{ boolean_value|yesno:"ㅇㅇ,ㄴㄴ" }}</p>
+  
+</body>
+</html>
