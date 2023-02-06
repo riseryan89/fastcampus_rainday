@@ -29,6 +29,11 @@ jobs:
         sed -i -e "s/ENV_VAR_NAME1:.*/ENV_VAR_NAME1: ${{ env.ENV_VAR_NAME1 }}/g" app.yaml
         sed -i -e "s/ENV_VAR_NAME2:.*/ENV_VAR_NAME2: ${{ env.ENV_VAR_NAME2 }}/g" app.yaml
         ...
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
 
     - name: Deploy to App Engine
       uses: google-github-actions/deploy-appengine@v1.1.0
