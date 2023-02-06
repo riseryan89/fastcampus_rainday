@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
 from pathlib import Path
-
+from platform import system as sys
 from dotenv import load_dotenv, dotenv_values
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,9 +25,12 @@ ENV_LOAD = load_dotenv(ENV_LOC)
 SECRET_KEY = "django-insecure-**a)w#p&5&yenp4i*o$7%zd@juu*@=4+zcbij5oj%wt052%q)("
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if sys().lower().startswith("windows") or sys().lower().startswith("darwin"):
+    DEBUG = True
+else:
+    DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -76,20 +79,36 @@ AUTH_USER_MODEL = "app.User"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "NAME": "rainday",
-        "ENGINE": "django.db.backends.mysql",
-        "USER": "rainday_app",
-        "PASSWORD": "rainday_app_dev_1",
-        "HOST": "127.0.0.1",
-        "PORT": "3306",
-        "OPTIONS": {
-            "autocommit": True,
-            "charset": "utf8mb4",
-        },
+if DEBUG:
+    DATABASES = {
+        "default": {
+            "NAME": "rainday",
+            "ENGINE": "django.db.backends.mysql",
+            "USER": "rainday_app",
+            "PASSWORD": "rainday_app_dev_1",
+            "HOST": "127.0.0.1",
+            "PORT": "3306",
+            "OPTIONS": {
+                "autocommit": True,
+                "charset": "utf8mb4",
+            },
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "NAME": "rainday",
+            "ENGINE": "django.db.backends.mysql",
+            "USER": os.environ.get("DB_USER"),
+            "PASSWORD": os.environ.get("DB_PASS"),
+            "HOST": os.environ.get("DB_HOST"),
+            "PORT": "3306",
+            "OPTIONS": {
+                "autocommit": True,
+                "charset": "utf8mb4",
+            },
+        }
+    }
 
 
 # Password validation
