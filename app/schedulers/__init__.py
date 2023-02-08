@@ -9,7 +9,7 @@ def scheduled_jobs():
     scheduler = BackgroundScheduler()
 
     scheduler.add_job(send_email, "cron", hour=1, minute=0)
-    scheduler.add_job(scheduled_collection, "interval", hour=1)
+    scheduler.add_job(scheduled_collection, "interval", hours=1)
     scheduler.add_job(update_model, "cron", day="last sun", jitter=600)
 
     # scheduler.add_job(update_model, "interval", seconds=30)
