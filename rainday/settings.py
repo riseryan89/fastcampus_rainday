@@ -17,12 +17,13 @@ from platform import system as sys
 from dotenv import load_dotenv, dotenv_values
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-ENV_LOC = BASE_DIR / "rainday/.env"
-ENV_LOAD = load_dotenv(ENV_LOC)
+
 try:
     ENV_FILE = json.load(open(os.path.join(BASE_DIR, "keys.json")))
 except FileNotFoundError:
-    ENV_FILE = None
+    ENV_LOC = BASE_DIR / "rainday/.env"
+    ENV_LOAD = load_dotenv(ENV_LOC)
+    ENV_FILE = dotenv_values(ENV_LOC)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -85,22 +86,6 @@ AUTH_USER_MODEL = "app.User"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# if DEBUG:
-#     DATABASES = {
-#         "default": {
-#             "NAME": "rainday",
-#             "ENGINE": "django.db.backends.mysql",
-#             "USER": "rainday_app",
-#             "PASSWORD": "rainday_app_dev_1",
-#             "HOST": "127.0.0.1",
-#             "PORT": "3306",
-#             "OPTIONS": {
-#                 "autocommit": True,
-#                 "charset": "utf8mb4",
-#             },
-#         }
-#     }
-# else:
 DATABASES = {
     "default": {
         "NAME": "rainday",
@@ -170,10 +155,5 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 
-if ENV_LOAD:
-    config = dotenv_values(ENV_LOC)
-    EMAIL_HOST_PASSWORD = config.get("GMAIL_AUTH")
-    EMAIL_HOST_USER = config.get("GMAIL_ADDR")
-else:
-    EMAIL_HOST_PASSWORD = ENV_FILE.get("GMAIL_AUTH")
-    EMAIL_HOST_USER = ENV_FILE.get("GMAIL_ADDR")
+EMAIL_HOST_PASSWORD = ENV_FILE.get("GMAIL_AUTH")
+EMAIL_HOST_USER = ENV_FILE.get("GMAIL_ADDR")
