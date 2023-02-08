@@ -19,6 +19,7 @@ def scheduled_collection():
         try:
             collect_load_weather_data(station_location, start_date_str, end_date_str)
             print(f"SUCCESS: {station_location.station_name}")
-        except Exception:
+        except Exception as e:
             print("ERROR")
             print("Cannot collect weather data for station location: ", station_location)
+            raise e

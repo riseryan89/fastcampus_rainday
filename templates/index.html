@@ -23,7 +23,6 @@
     <div class="col-12">
       <div class="card">
         <div class="card-body">
-{#          I want to place button at the end of h5 tag and put space between max#}
         <div class="row justify-content-between">
           <div class="col">
           <h5 class="card-title">오늘 비가 올지 궁금하신가요?</h5>
@@ -34,9 +33,10 @@
             {% endif %}
           </div>
         </div>
-          {{ hello }}
           <h6 class="card-title my-3"><mark>오늘은
-            {% if selected_region %}{{ selected_region }}{% else %}{{ region }}{% endif %}
+            {% if selected_region %}{{ selected_region }}{% else %}
+            {% if not has_region%}서울{% else %}{{ region }}{% endif %}
+            {% endif %}
             에 비가
             {% if prediction %}올{% else %}오지 않을{% endif %} 예정입니다.
             {% if prediction %}☔{% else %}☀️{% endif %}

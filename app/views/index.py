@@ -38,7 +38,6 @@ def index(request):
         subscribe_form = LocationSubscribeForm()
 
     context = {
-        "hello": os.environ.get("ENV_VAR_NAME1"),
         "region": region,
         "selected_region": selected_region,
         "has_region": has_region,
